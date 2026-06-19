@@ -9,52 +9,119 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg:#0f1620; --surface:#182230; --surface-2:#1f2c3d; --line:#2b3a4d;
-      --text:#e6edf3; --muted:#8b98a9; --amber:#f0b429; --amber-ink:#1a1304;
-      --ok:#4ade80; --err:#ff6b6b;
+      --pink:#cc2d63; --pink-soft:#fbe4ee; --blue:#2c5fd6; --blue-soft:#e6eefc;
+      --bg-pink:#fdf1f7; --bg-blue:#eef3fe;
+      --surface:#ffffff; --line:#ead7e4;
+      --text:#1a2138; --muted:#5a6276;
+      --ok:#1f8a4c; --err:#c92a48;
       --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
       --display:"Space Grotesk",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
     }
     * { box-sizing:border-box; }
+    html { font-size:100%; }
     body {
       margin:0;
-      background:radial-gradient(1200px 600px at 80% -10%, #1b2738 0, transparent 60%), var(--bg);
+      background:linear-gradient(135deg, var(--bg-pink) 0%, var(--bg-blue) 100%);
+      min-height:100vh;
       color:var(--text); font-family:var(--display); line-height:1.5;
       -webkit-font-smoothing:antialiased;
     }
-    .wrap { max-width:1040px; margin:0 auto; padding:48px 20px 64px; }
-    header { margin-bottom:36px; }
-    .eyebrow { font-family:var(--mono); font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:var(--amber); margin:0 0 10px; }
+
+    /* Salta para o conteúdo (leitores de ecrã / teclado) */
+    .skip { position:absolute; left:-999px; top:0; background:var(--blue); color:#fff;
+      padding:10px 16px; border-radius:0 0 8px 0; z-index:100; font-weight:700; }
+    .skip:focus { left:0; }
+
+    /* Barra de acessibilidade */
+    .a11y-bar { display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+      max-width:1040px; margin:0 auto; padding:14px 20px 0; }
+    .a11y-bar .lbl { font-family:var(--mono); font-size:12px; color:var(--muted); margin-right:2px; }
+    .a11y-bar button { width:auto; margin:0; padding:7px 12px; min-height:38px;
+      background:#fff; color:var(--text); border:1.5px solid var(--line);
+      border-radius:8px; font-family:var(--mono); font-size:13px; font-weight:500; cursor:pointer; }
+    .a11y-bar button:hover { border-color:var(--blue); }
+    .a11y-bar button[aria-pressed="true"] { background:var(--blue); color:#fff; border-color:var(--blue); }
+
+    .wrap { max-width:1040px; margin:0 auto; padding:20px 20px 64px; }
+    header { margin-bottom:32px; }
+    .eyebrow { font-family:var(--mono); font-size:13px; letter-spacing:.1em; text-transform:uppercase;
+      margin:0 0 10px; background:linear-gradient(90deg,var(--pink),var(--blue));
+      -webkit-background-clip:text; background-clip:text; color:transparent; font-weight:700; }
     h1 { font-size:clamp(28px,5vw,44px); font-weight:700; margin:0 0 8px; letter-spacing:-.01em; }
     .sub { color:var(--muted); font-family:var(--mono); font-size:14px; margin:0; }
-    .sub::before { content:"▸ "; color:var(--amber); }
+    .sub::before { content:"▸ "; color:var(--pink); }
+
     .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
     .card-wide { grid-column:1 / -1; }
     @media (max-width:720px){ .grid { grid-template-columns:1fr; } }
-    .card { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:24px; }
+
+    .card { background:var(--surface); border:1px solid var(--line); border-radius:16px;
+      padding:24px; box-shadow:0 6px 24px rgba(44,95,214,.06); }
     .card h2 { font-size:18px; margin:0 0 2px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
-    .tag { font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.08em; color:var(--amber); border:1px solid var(--line); border-radius:999px; padding:2px 9px; }
+    .tag { font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.06em;
+      color:var(--pink); border:1.5px solid var(--pink-soft); background:var(--pink-soft);
+      border-radius:999px; padding:2px 10px; }
     .hint { color:var(--muted); font-family:var(--mono); font-size:12.5px; margin:6px 0 18px; }
-    label { display:block; font-family:var(--mono); font-size:12.5px; color:var(--muted); margin:14px 0 6px; }
-    input, select { width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:9px; color:var(--text); font-family:var(--mono); font-size:15px; padding:11px 13px; transition:border-color .15s ease, box-shadow .15s ease; }
-    input:focus, select:focus { outline:none; border-color:var(--amber); box-shadow:0 0 0 3px rgba(240,180,41,.18); }
-    button { margin-top:18px; width:100%; background:var(--amber); color:var(--amber-ink); border:none; border-radius:9px; font-family:var(--display); font-weight:700; font-size:15px; padding:12px 14px; cursor:pointer; transition:transform .08s ease, filter .15s ease; }
-    button:hover { filter:brightness(1.06); }
+
+    label { display:block; font-family:var(--mono); font-size:12.5px; color:var(--muted); margin:14px 0 6px; font-weight:500; }
+    input, select { width:100%; background:#fff; border:1.5px solid var(--line); border-radius:10px;
+      color:var(--text); font-family:var(--mono); font-size:15px; padding:11px 13px;
+      transition:border-color .15s ease, box-shadow .15s ease; }
+    input:focus, select:focus { outline:none; border-color:var(--blue);
+      box-shadow:0 0 0 3px rgba(44,95,214,.22); }
+
+    button { margin-top:18px; width:100%;
+      background:linear-gradient(90deg,var(--pink),var(--blue));
+      color:#fff; border:none; border-radius:10px; font-family:var(--display); font-weight:700;
+      font-size:15px; padding:13px 14px; cursor:pointer; transition:filter .15s ease, transform .08s ease; }
+    button:hover { filter:brightness(1.05); }
     button:active { transform:translateY(1px); }
-    button:focus-visible { outline:3px solid #fff; outline-offset:2px; }
-    .msg { margin-top:16px; min-height:22px; font-family:var(--mono); font-size:14px; word-break:break-word; }
-    .msg.erro { color:var(--err); } .msg.erro::before { content:"✗ "; }
-    .msg.ok { color:var(--ok); } .msg.ok::before { content:"✓ "; }
-    .res { margin-top:16px; min-height:40px; font-family:var(--mono); font-size:clamp(20px,4vw,28px); font-weight:700; color:var(--amber); }
-    .res.erro { color:var(--err); font-size:14px; font-weight:400; } .res.erro::before { content:"✗ "; }
+    :focus-visible { outline:3px solid var(--blue); outline-offset:2px; }
+    button:focus-visible { outline:3px solid var(--text); outline-offset:3px; }
+
+    .msg { margin-top:16px; min-height:22px; font-family:var(--mono); font-size:14px; font-weight:500; word-break:break-word; }
+    .msg.erro { color:var(--err); } .msg.erro::before { content:"✗ "; font-weight:700; }
+    .msg.ok { color:var(--ok); } .msg.ok::before { content:"✓ "; font-weight:700; }
+    .res { margin-top:16px; min-height:40px; font-family:var(--mono); font-size:clamp(20px,4vw,28px); font-weight:700;
+      background:linear-gradient(90deg,var(--pink),var(--blue)); -webkit-background-clip:text; background-clip:text; color:transparent; }
+    .res.erro { color:var(--err); -webkit-text-fill-color:var(--err); background:none; font-size:14px; font-weight:500; }
+    .res.erro::before { content:"✗ "; }
+
     .conv-row { display:grid; grid-template-columns:1.4fr 1fr; gap:16px; }
     @media (max-width:520px){ .conv-row { grid-template-columns:1fr; } }
+
     footer { margin-top:40px; color:var(--muted); font-family:var(--mono); font-size:12px; text-align:center; }
-    footer code { color:var(--amber); }
+    footer code { color:var(--pink); }
+
+    /* Alto contraste */
+    body.alto-contraste { background:#fff; }
+    body.alto-contraste .card { border:2px solid #000; box-shadow:none; }
+    body.alto-contraste, body.alto-contraste h1, body.alto-contraste h2,
+    body.alto-contraste label, body.alto-contraste .hint, body.alto-contraste .sub { color:#000; }
+    body.alto-contraste .eyebrow, body.alto-contraste .res {
+      background:none; -webkit-text-fill-color:#000; color:#000; }
+    body.alto-contraste .tag { color:#000; background:#fff; border-color:#000; }
+    body.alto-contraste input, body.alto-contraste select { border-color:#000; color:#000; background:#fff; }
+    body.alto-contraste button { background:#000; color:#fff; }
+    body.alto-contraste .msg.ok { color:#0a6b30; }
+    body.alto-contraste .msg.erro, body.alto-contraste .res.erro { color:#a3001b; -webkit-text-fill-color:#a3001b; }
+
     @media (prefers-reduced-motion:reduce){ * { transition:none !important; } }
+    @media (prefers-contrast:more){
+      input, select, .card, .a11y-bar button { border-color:#000 !important; }
+    }
   </style>
 </head>
 <body>
+  <a href="#conteudo" class="skip">Saltar para o conteúdo</a>
+
+  <div class="a11y-bar" role="region" aria-label="Opções de acessibilidade">
+    <span class="lbl">Acessibilidade:</span>
+    <button type="button" id="font-menos" aria-label="Diminuir tamanho do texto">A−</button>
+    <button type="button" id="font-mais" aria-label="Aumentar tamanho do texto">A+</button>
+    <button type="button" id="contraste" aria-pressed="false">Alto contraste</button>
+  </div>
+
   <div class="wrap">
     <header>
       <p class="eyebrow">Tarefa 2 · Python · Flask</p>
@@ -62,16 +129,15 @@
       <p class="sub">Verificação no servidor — as passwords nunca chegam ao browser</p>
     </header>
 
-    <main class="grid">
+    <main class="grid" id="conteudo">
 
-      <!-- Exercício 1 -->
       <section class="card" aria-labelledby="t1">
         <h2 id="t1">Login <span class="tag">Exercício 1 · 1 utilizador</span></h2>
-        <p class="hint">Introduz as tuas credenciais.</p>
+        <p class="hint" id="h1">Introduz as tuas credenciais.</p>
         <form method="post">
           <input type="hidden" name="acao" value="login1" />
           <label for="user1">Utilizador</label>
-          <input id="user1" name="user1" type="text" autocomplete="off" value="{{ user1 }}" />
+          <input id="user1" name="user1" type="text" autocomplete="off" aria-describedby="h1" value="{{ user1 }}" />
           <label for="pass1">Password</label>
           <input id="pass1" name="pass1" type="password" autocomplete="off" />
           <button type="submit">Entrar</button>
@@ -79,14 +145,13 @@
         <p class="{{ classe1 }}" role="status" aria-live="polite">{{ msg1 }}</p>
       </section>
 
-      <!-- Exercício 2 -->
       <section class="card" aria-labelledby="t2">
         <h2 id="t2">Login <span class="tag">Exercício 2 · 2 utilizadores</span></h2>
-        <p class="hint">Introduz as tuas credenciais.</p>
+        <p class="hint" id="h2">Introduz as tuas credenciais.</p>
         <form method="post">
           <input type="hidden" name="acao" value="login2" />
           <label for="user2">Utilizador</label>
-          <input id="user2" name="user2" type="text" autocomplete="off" value="{{ user2 }}" />
+          <input id="user2" name="user2" type="text" autocomplete="off" aria-describedby="h2" value="{{ user2 }}" />
           <label for="pass2">Password</label>
           <input id="pass2" name="pass2" type="password" autocomplete="off" />
           <button type="submit">Entrar</button>
@@ -94,7 +159,6 @@
         <p class="{{ classe2 }}" role="status" aria-live="polite">{{ msg2 }}</p>
       </section>
 
-      <!-- Conversor -->
       <section class="card card-wide" aria-labelledby="t3">
         <h2 id="t3">Conversor de Temperatura <span class="tag">Celsius · Fahrenheit · Kelvin</span></h2>
         <p class="hint">Escolhe a conversão, escreve o valor e carrega em Converter.</p>
@@ -126,5 +190,36 @@
 
     <footer>Feito em Python com <code>Flask</code> · backend no Render · código no GitHub</footer>
   </div>
+
+  {% raw %}
+  <script>
+  (function () {
+    var root = document.documentElement;
+    var body = document.body;
+    var escala = 1;
+
+    function aplicar() { root.style.fontSize = (escala * 100) + "%"; }
+    function guardar() {
+      try { localStorage.setItem("a11y", JSON.stringify({ e: escala, c: body.classList.contains("alto-contraste") })); } catch (x) {}
+    }
+    try {
+      var s = JSON.parse(localStorage.getItem("a11y") || "null");
+      if (s) { if (s.e) { escala = s.e; aplicar(); } if (s.c) { body.classList.add("alto-contraste"); } }
+    } catch (x) {}
+
+    document.getElementById("font-mais").addEventListener("click", function () {
+      escala = Math.min(1.6, Math.round((escala + 0.1) * 10) / 10); aplicar(); guardar();
+    });
+    document.getElementById("font-menos").addEventListener("click", function () {
+      escala = Math.max(0.9, Math.round((escala - 0.1) * 10) / 10); aplicar(); guardar();
+    });
+
+    var btnC = document.getElementById("contraste");
+    function syncC() { btnC.setAttribute("aria-pressed", body.classList.contains("alto-contraste")); }
+    syncC();
+    btnC.addEventListener("click", function () { body.classList.toggle("alto-contraste"); syncC(); guardar(); });
+  })();
+  </script>
+  {% endraw %}
 </body>
 </html>
