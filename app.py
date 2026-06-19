@@ -4,21 +4,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
-# =========================================================
-# Utilizadores
-# As passwords só existem no servidor e nunca chegam ao browser.
-# Por defeito usa estas; em produção podes defini-las como
-# variáveis de ambiente no Render (PW_ADMIN, PW_SARA).
-# =========================================================
 UTILIZADORES = {
     "admin": generate_password_hash(os.environ.get("PW_ADMIN", "1234")),
     "sara":  generate_password_hash(os.environ.get("PW_SARA", "abcd")),
 }
 
 
-# =========================================================
+
 # Conversor de Temperatura
-# =========================================================
+
 def cf(c): return c * 9 / 5 + 32
 def fc(f): return (f - 32) * 5 / 9
 def ck(c): return c + 273.15
@@ -71,7 +65,7 @@ def index():
             else:
                 ctx["msg2"], ctx["classe2"] = f"Login efetuado com sucesso! Bem-vindo(a), {user}.", "msg ok"
 
-        # ---- Conversor de temperatura ----
+        # Conversor de temperatura
         elif acao == "converter":
             tipo = request.form.get("tipo_conv", "cf")
             valor_txt = request.form.get("valor_conv", "")
