@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tarefa 2 — Login &amp; Conversor (Flask)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg:#0f1620; --surface:#182230; --surface-2:#1f2c3d; --line:#2b3a4d;
+      --text:#e6edf3; --muted:#8b98a9; --amber:#f0b429; --amber-ink:#1a1304;
+      --ok:#4ade80; --err:#ff6b6b;
+      --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+      --display:"Space Grotesk",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    }
+    * { box-sizing:border-box; }
+    body {
+      margin:0;
+      background:radial-gradient(1200px 600px at 80% -10%, #1b2738 0, transparent 60%), var(--bg);
+      color:var(--text); font-family:var(--display); line-height:1.5;
+      -webkit-font-smoothing:antialiased;
+    }
+    .wrap { max-width:1040px; margin:0 auto; padding:48px 20px 64px; }
+    header { margin-bottom:36px; }
+    .eyebrow { font-family:var(--mono); font-size:13px; letter-spacing:.12em; text-transform:uppercase; color:var(--amber); margin:0 0 10px; }
+    h1 { font-size:clamp(28px,5vw,44px); font-weight:700; margin:0 0 8px; letter-spacing:-.01em; }
+    .sub { color:var(--muted); font-family:var(--mono); font-size:14px; margin:0; }
+    .sub::before { content:"▸ "; color:var(--amber); }
+    .grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+    .card-wide { grid-column:1 / -1; }
+    @media (max-width:720px){ .grid { grid-template-columns:1fr; } }
+    .card { background:var(--surface); border:1px solid var(--line); border-radius:14px; padding:24px; }
+    .card h2 { font-size:18px; margin:0 0 2px; display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; }
+    .tag { font-family:var(--mono); font-size:11px; font-weight:500; letter-spacing:.08em; color:var(--amber); border:1px solid var(--line); border-radius:999px; padding:2px 9px; }
+    .hint { color:var(--muted); font-family:var(--mono); font-size:12.5px; margin:6px 0 18px; }
+    label { display:block; font-family:var(--mono); font-size:12.5px; color:var(--muted); margin:14px 0 6px; }
+    input, select { width:100%; background:var(--surface-2); border:1px solid var(--line); border-radius:9px; color:var(--text); font-family:var(--mono); font-size:15px; padding:11px 13px; transition:border-color .15s ease, box-shadow .15s ease; }
+    input:focus, select:focus { outline:none; border-color:var(--amber); box-shadow:0 0 0 3px rgba(240,180,41,.18); }
+    button { margin-top:18px; width:100%; background:var(--amber); color:var(--amber-ink); border:none; border-radius:9px; font-family:var(--display); font-weight:700; font-size:15px; padding:12px 14px; cursor:pointer; transition:transform .08s ease, filter .15s ease; }
+    button:hover { filter:brightness(1.06); }
+    button:active { transform:translateY(1px); }
+    button:focus-visible { outline:3px solid #fff; outline-offset:2px; }
+    .msg { margin-top:16px; min-height:22px; font-family:var(--mono); font-size:14px; word-break:break-word; }
+    .msg.erro { color:var(--err); } .msg.erro::before { content:"✗ "; }
+    .msg.ok { color:var(--ok); } .msg.ok::before { content:"✓ "; }
+    .res { margin-top:16px; min-height:40px; font-family:var(--mono); font-size:clamp(20px,4vw,28px); font-weight:700; color:var(--amber); }
+    .res.erro { color:var(--err); font-size:14px; font-weight:400; } .res.erro::before { content:"✗ "; }
+    .conv-row { display:grid; grid-template-columns:1.4fr 1fr; gap:16px; }
+    @media (max-width:520px){ .conv-row { grid-template-columns:1fr; } }
+    footer { margin-top:40px; color:var(--muted); font-family:var(--mono); font-size:12px; text-align:center; }
+    footer code { color:var(--amber); }
+    @media (prefers-reduced-motion:reduce){ * { transition:none !important; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <p class="eyebrow">Tarefa 2 · Python · Flask</p>
+      <h1>Sistema de Login &amp; Conversor de Temperatura</h1>
+      <p class="sub">Verificação no servidor — as passwords nunca chegam ao browser</p>
+    </header>
+
+    <main class="grid">
+
+      <!-- Exercício 1 -->
+      <section class="card" aria-labelledby="t1">
+        <h2 id="t1">Login <span class="tag">Exercício 1 · 1 utilizador</span></h2>
+        <p class="hint">Introduz as tuas credenciais.</p>
+        <form method="post">
+          <input type="hidden" name="acao" value="login1" />
+          <label for="user1">Utilizador</label>
+          <input id="user1" name="user1" type="text" autocomplete="off" value="{{ user1 }}" />
+          <label for="pass1">Password</label>
+          <input id="pass1" name="pass1" type="password" autocomplete="off" />
+          <button type="submit">Entrar</button>
+        </form>
+        <p class="{{ classe1 }}" role="status" aria-live="polite">{{ msg1 }}</p>
+      </section>
+
+      <!-- Exercício 2 -->
+      <section class="card" aria-labelledby="t2">
+        <h2 id="t2">Login <span class="tag">Exercício 2 · 2 utilizadores</span></h2>
+        <p class="hint">Introduz as tuas credenciais.</p>
+        <form method="post">
+          <input type="hidden" name="acao" value="login2" />
+          <label for="user2">Utilizador</label>
+          <input id="user2" name="user2" type="text" autocomplete="off" value="{{ user2 }}" />
+          <label for="pass2">Password</label>
+          <input id="pass2" name="pass2" type="password" autocomplete="off" />
+          <button type="submit">Entrar</button>
+        </form>
+        <p class="{{ classe2 }}" role="status" aria-live="polite">{{ msg2 }}</p>
+      </section>
+
+      <!-- Conversor -->
+      <section class="card card-wide" aria-labelledby="t3">
+        <h2 id="t3">Conversor de Temperatura <span class="tag">Celsius · Fahrenheit · Kelvin</span></h2>
+        <p class="hint">Escolhe a conversão, escreve o valor e carrega em Converter.</p>
+        <form method="post">
+          <input type="hidden" name="acao" value="converter" />
+          <div class="conv-row">
+            <div>
+              <label for="tipo_conv">Conversão</label>
+              <select id="tipo_conv" name="tipo_conv">
+                <option value="cf" {% if tipo_conv=='cf' %}selected{% endif %}>Celsius → Fahrenheit</option>
+                <option value="fc" {% if tipo_conv=='fc' %}selected{% endif %}>Fahrenheit → Celsius</option>
+                <option value="ck" {% if tipo_conv=='ck' %}selected{% endif %}>Celsius → Kelvin</option>
+                <option value="kc" {% if tipo_conv=='kc' %}selected{% endif %}>Kelvin → Celsius</option>
+                <option value="fk" {% if tipo_conv=='fk' %}selected{% endif %}>Fahrenheit → Kelvin</option>
+                <option value="kf" {% if tipo_conv=='kf' %}selected{% endif %}>Kelvin → Fahrenheit</option>
+              </select>
+            </div>
+            <div>
+              <label for="valor_conv">Valor</label>
+              <input id="valor_conv" name="valor_conv" type="number" step="any" inputmode="decimal" value="{{ valor_conv }}" />
+            </div>
+          </div>
+          <button type="submit">Converter</button>
+        </form>
+        <p class="{{ classe_conv }}" role="status" aria-live="polite">{{ res_conv }}</p>
+      </section>
+
+    </main>
+
+    <footer>Feito em Python com <code>Flask</code> · backend no Render · código no GitHub</footer>
+  </div>
+</body>
+</html>
